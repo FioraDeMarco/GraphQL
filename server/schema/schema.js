@@ -1,6 +1,6 @@
 const graphql = require('graphql')
-
-const {GraphQLObectType, GraphQLString, GraphQLSchema} = graphql
+const _ = require('lodash')
+const {GraphQLObjectType, GraphQLString, GraphQLSchema} = graphql
 
 // dummy data
 var books = [
@@ -9,7 +9,7 @@ var books = [
     {name: 'The Long Earth', genre: 'Sci-Fi', id: '3'},
 ]
 
-const BookType = new GraphQLObectType({
+const BookType = new GraphQLObjectType({
     name: 'Book',
     fields: () => ({
         id: {type: GraphQLString},
@@ -26,7 +26,7 @@ const RootQuery = new graphql.GraphQLObjectType({
             args: { id: {type:GraphQLString}},
             resolve(parent, args) {
                 // code to get data from db / other source - Parent will come into play when we start to look at relationships between data
-                //args.id
+                return _.find(books, { id: args.id });
             }
         }
     }
