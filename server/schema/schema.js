@@ -21,13 +21,15 @@ var authors = [
 const BookType = new GraphQLObjectType({
     name: 'Book',
     fields: () => ({
+
+// Fields are wrapped in a function because if we do, we are still running the code from top to bottom, but we are not executing the fucntion until after all of the file is run. By the time the whole file is run the different types are all known, even if they come later in the code. 
+
         id: {type: GraphQLID}, // Will still work on strings
         name: {type: GraphQLString},
         genre: {type: GraphQLString},
         author: {
             type: AuthorType,
             resolve(parent, args) {
-                console.log(parent)
                 return _.find(authors, { id: parent.authorId})
             }
         }
@@ -53,7 +55,7 @@ const AuthorType = new GraphQLObjectType({
 
 // The Root Query defines how we can jump into the graph to retrieve data 
 
-// const RootQuery = new graphql.GraphQLObjectType({
+
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -62,7 +64,6 @@ const RootQuery = new GraphQLObjectType({
             args: { id: {type:GraphQLID}},
             resolve(parent, args) {
                 // code to get data from db / other source - Parent will come into play when we start to look at relationships between data
-                console.log(typeof(args.id))
                 return _.find(books, { id: args.id });
             }
         },
@@ -76,23 +77,21 @@ const RootQuery = new GraphQLObjectType({
         books: {
             type: new GraphQLList(BookType),
             resolve(parent, args) {
-                console.log(books)
                 return books
             }
         },
         authors: {
             type: new GraphQLList(AuthorType),
             resolve(parent, args) {
-                console.log(authors)
                 return authors
             }
         }
     }
 });
 
-// run <npx nodemon app>
 
-// module.exports = new graphql.GraphQLSchema({
+// run script <npx nodemon app>
+
 module.exports = new GraphQLSchema({
     query: RootQuery
 })
