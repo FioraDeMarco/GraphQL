@@ -21,7 +21,7 @@ var authors = [
 const BookType = new GraphQLObjectType({
     name: 'Book',
     fields: () => ({
-        id: {type: GraphQLID},
+        id: {type: GraphQLID}, // Will still work on strings
         name: {type: GraphQLString},
         genre: {type: GraphQLString},
         author: {
@@ -43,13 +43,18 @@ const AuthorType = new GraphQLObjectType({
         books: {
             type: new GraphQLList(BookType),
             resolve(parent, args) {
+               // to get data from db || other source
+               console.log(typeof(args.id)) // still string bc that's what it is above
                 return _.filter(books, { authorId: parent.id})
             }
         }
     })
 })
 
-const RootQuery = new graphql.GraphQLObjectType({
+// The Root Query defines how we can jump into the graph to retrieve data 
+
+// const RootQuery = new graphql.GraphQLObjectType({
+const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
         book: {
@@ -87,6 +92,7 @@ const RootQuery = new graphql.GraphQLObjectType({
 
 // run <npx nodemon app>
 
-module.exports = new graphql.GraphQLSchema({
+// module.exports = new graphql.GraphQLSchema({
+module.exports = new GraphQLSchema({
     query: RootQuery
 })
